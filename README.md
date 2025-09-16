@@ -1,34 +1,77 @@
-# GroceryApp sprint2 
+# Grocery App
 
-## Docentversie  
-In deze versie zijn de wijzigingen doorgevoerd en is de code compleet.  
+Deze repository bevat de **Grocery App**. De ontwikkeling volgt een vereenvoudigde Gitflow-structuur.
 
-## Studentversie:  
-### UC04 Kiezen kleur boodschappenlijst  
-Is compleet.
+---
 
-### UC05 Product op boodschappenlijst plaatsen:   
-- `GetAvailableProducts()`  
-	De header van de functie bestaat maar de inhoud niet.  
-	Zorg dat je een lijst maakt met de beschikbare producten (dit zijn producten waarvan nog voorraad bestaat en die niet al op de boodschappenlijst staat).  
-- `AddProduct()`   
-	Zorg dat het gekozen beschikbare product op de boodschappenlijst komt (door middel van de GroceryListItemsService).  
+## Branch-strategie
 
-### UC06 Inloggen  
-Een collega is ziek maar heeft al een deel van de inlogfunctionaliteit gemaakt.  
-Dit betreft het Loginscherm (LoginView) met bijbehorend ViewModel (LoginViewModel),  
-maar ook al een deel van de authenticatieService (AuthServnn,mnmice in Grocery.Core),  
-de clientrepository (ClientRepository in Grocery.Core.Data)  
-en de client class (Client in Grocery.Core).  
-De opdracht is om zelfstandig de login functionaliteit te laten werken.  
+- **main**  
+  Bevat altijd stabiele, productieklare code. Nieuwe versies komen hier via Pull Request van `develop`.
 
-*Stappenplan:*  
-1. Begin met de Client class en zorg dat er gebruik wordt gemaakt van Properties.  
-2. In de ClienRepository wordt nu steeds een vaste client uit de lijst geretourneerd. Werk dit uit zodat de juiste Client wordt geretourneerd.  
-3. Werk de klasse AuthService verder uit, zodat daadwerkelijk de controle op het ingevoerde password wordt uitgevoerd.
-4. Zorg dat de LoginView.xaml wordt toegevoegd aan het Grocery.App project in de Views folder (Add ExistingItem). De file bevindt zich al op deze plek, maar wordt nu niet meegecompileerd.  
-5. In MauiProgramm class van de Grocery.App staan de registraties van de AuthService en de LoginView in comment --> haal de // weg.  
-6. In App.xaml.cs staat /*LoginViewModel viewModel*/ haal hier /* en */ weg, zodat het LoginViewModel beschikbaar komt.  
-7. In App.xaml.cs staat //MainPage = new LoginView(viewModel); Haal hier de // weg en zet de regel erboven in commentaar, zodat AppShell wordt uitgeschakeld.  
-8. Uncomment de route naar het Login scherm in AppShell.xaml.cs: //Routing.RegisterRoute("Login", typeof(LoginView)); 
- 
+- **develop**  
+  Integratiebranch waar alle features samenkomen. Alle ontwikkeling gebeurt hier uiteindelijk.
+
+- **feature/***  
+  Voor nieuwe features of use cases.  
+  Voorbeelden: `feature/UC4`, `feature/UC5`, `feature/UC6-login`.
+
+- **docs/***  
+  Voor documentatie-aanpassingen zoals README of CONTRIBUTING.md.  
+  Voorbeeld: `docs/update-readme`.
+
+- **hotfix/***  
+  Voor urgente fixes in productie. Wordt terug gemerged naar zowel `main` als `develop`.
+
+---
+
+## Workflow
+
+### Nieuwe feature
+1. Checkout `develop` en pull de laatste versie:
+```bash
+git checkout develop
+git pull
+git checkout -b feature/UCx
+```
+* Ontwikkel de feature en commit regelmatig.
+
+* Push de branch en open een Pull Request naar develop.
+
+* Laat review uitvoeren en merge na goedkeuring.
+
+### Documentatie-aanpassingen
+Checkout develop:
+
+```bash
+	git checkout develop
+	git pull
+	git checkout -b docs/update-readme
+```
+* Pas documentatie aan, commit en push.
+* Open een Pull Request naar develop en merge na review.
+
+### Release naar productie
+
+* Open een Pull Request van develop naar main.
+
+* Voeg een duidelijke releasebeschrijving toe met de belangrijkste features, fixes en eventuele breaking changes.
+
+* Merge na succesvolle tests en review.
+
+
+Tag de release (bijv. v1.0.0) en push de tag:
+
+```bash
+git tag v1.0.0
+git push --tags
+```
+### Richtlijnen
+
+* Nooit directe commits op main of develop.
+
+* Gebruik duidelijke branch-namen (feature/*, docs/*, hotfix/*).
+
+* Commit messages volgen het patroon: feat(scope), fix(scope), docs(scope).
+
+* Verwijder gemergde branches om overzicht te behouden.
