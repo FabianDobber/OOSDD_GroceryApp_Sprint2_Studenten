@@ -90,7 +90,6 @@ namespace Grocery.App.ViewModels
             {
 
             }
-
             var toRemove = AvailableProducts.FirstOrDefault(p => p.Id == product.Id);
             if (toRemove != null)
             {
