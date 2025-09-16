@@ -85,12 +85,13 @@ namespace Grocery.App.ViewModels
             if (createdItem != null)
             {
                 MyGroceryListItems.Add(createdItem);
+                product.Stock--;
             }
             else
             {
-
+                return;
             }
-            var toRemove = AvailableProducts.FirstOrDefault(p => p.Id == product.Id);
+                var toRemove = AvailableProducts.FirstOrDefault(p => p.Id == product.Id);
             if (toRemove != null)
             {
                 AvailableProducts.Remove(toRemove);
