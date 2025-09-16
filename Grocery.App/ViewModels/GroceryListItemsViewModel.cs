@@ -22,44 +22,82 @@ namespace Grocery.App.ViewModels
         {
             _groceryListItemsService = groceryListItemsService;
             _productService = productService;
-            Load(groceryList.Id);
         }
 
         private void Load(int id)
         {
-            MyGroceryListItems.Clear();
-            foreach (var item in _groceryListItemsService.GetAllOnGroceryListId(id)) MyGroceryListItems.Add(item);
-            GetAvailableProducts();
-        }
+            var items = _groceryListItemsService.GetAll();
+            if (items != null)
+            {
+                foreach (var item in _groceryListItemsService.GetAllOnGroceryListId(id)) MyGroceryListItems.Add(item);
 
+            }
+            GetAvailableProducts();
+
+        }
         private void GetAvailableProducts()
         {
-            //Maak de lijst AvailableProducts leeg
-            //Haal de lijst met producten op
-            //Controleer of het product al op de boodschappenlijst staat, zo niet zet het in de AvailableProducts lijst
-            //Houdt rekening met de voorraad (als die nul is kun je het niet meer aanbieden).            
+            AvailableProducts.Clear();
+            var allProducts = _productService.GetAll();
+            if (allProducts == null) return;
+            var existingProductIds = new HashSet<int>(MyGroceryListItems.Select(i => i.ProductId));
+
+            foreach (var product in allProducts)
+            {
+                if (product == null) continue;
+                if (product.Stock <= 0) continue;
+                if (product.Id <= 0) continue;
+
+                if (!existingProductIds.Contains(product.Id))
+                {
+                    AvailableProducts.Add(product);
+                }
+            }
+
         }
 
         partial void OnGroceryListChanged(GroceryList value)
         {
+            if (value == null) return;
+            if (value.Id == 0) return;
             Load(value.Id);
         }
 
         [RelayCommand]
         public async Task ChangeColor()
         {
-            Dictionary<string, object> paramater = new() { { nameof(GroceryList), GroceryList } };
-            await Shell.Current.GoToAsync($"{nameof(ChangeColorView)}?Name={GroceryList.Name}", true, paramater);
+            if (GroceryList == null) return;
+            var parameter = new Dictionary<string, object> { { nameof(GroceryList), GroceryList } };
+            await Shell.Current.GoToAsync(nameof(ChangeColorView), true, parameter);
         }
         [RelayCommand]
         public void AddProduct(Product product)
         {
-            //Controleer of het product bestaat en dat de Id > 0
-            //Maak een GroceryListItem met Id 0 en vul de juiste productid en grocerylistid
-            //Voeg het GroceryListItem toe aan de dataset middels de _groceryListItemsService
-            //Werk de voorraad (Stock) van het product bij en zorg dat deze wordt vastgelegd (middels _productService)
-            //Werk de lijst AvailableProducts bij, want dit product is niet meer beschikbaar
-            //call OnGroceryListChanged(GroceryList);
+            if (product == null) return;
+            if (GroceryList == null) return;
+
+            var newItem = new GroceryListItem(0, GroceryList.Id, product.Id, 1);
+
+            newItem.Product = product;
+
+            var createdItem = _groceryListItemsService.Add(newItem);
+
+            if (createdItem != null)
+            {
+                MyGroceryListItems.Add(createdItem);
+            }
+            else
+            {
+
+            }
+
+            var toRemove = AvailableProducts.FirstOrDefault(p => p.Id == product.Id);
+            if (toRemove != null)
+            {
+                AvailableProducts.Remove(toRemove);
+            }
         }
+
     }
 }
+
